@@ -411,7 +411,7 @@ class Component extends HTMLElement {
 		const template = document.createElement('template');
 		template.innerHTML = html;
 		const content = template.content;
-
+		
 		this.count = content.querySelector('.count');
 		const incrementButton = content.querySelectorAll('button')[0];
 
@@ -419,12 +419,22 @@ class Component extends HTMLElement {
 			__WEBPACK_IMPORTED_MODULE_1__action__["a" /* default */].countUp();
 		});
 
-		__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].on('CHANGE', () => {
-			this.setState({ count: __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].getCount() });
-		});
-
-		__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].emit('CHANGE');
 		this.appendChild(content);
+
+		this.handleStoreChange = this.handleStoreChange.bind(this);
+		__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].on('CHANGE', this.handleStoreChange);
+
+		//初期処理
+		this.handleStoreChange();
+	}
+
+	handleStoreChange() {
+		this.setState({ count: __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].getCount() });
+		//this.setState(store)と書いても問題ない;
+	}
+
+	disconnectedCallback() {
+		__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].removeListener('CHANGE', this.handleStoreChange);
 	}
 
 	stateChangedCallback(name, oldValue, newValue) {
