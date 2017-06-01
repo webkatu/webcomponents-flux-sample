@@ -63,19 +63,47 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_events__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_events___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_events__);
+const map = new WeakMap();
+const privates = (object) => {
+	if(! map.has(object)) {
+		map.set(object, {});
+	}
+	return map.get(object);
+};
 
+function getState() { return privates(this).state; }
 
-/* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_0_events___default.a());
+function setState(state) {
+	if(typeof state !== 'object' || state === null) return;
+	
+	const that = privates(this);
+	if(typeof that.state !== 'object' || that.state === null) that.state = {};
+	const oldState = that.state;
+	const newState = that.state = Object.assign({}, that.state, state);
+
+	if(Array.isArray(this.constructor.observedState) === false) return;
+	if(typeof this.stateChangedCallback !== 'function') return;
+
+	this.constructor.observedState.forEach((name) => {
+		if(oldState[name] === newState[name]) return;
+		this.stateChangedCallback(name, oldState[name], newState[name]);
+	});
+}
+
+module.exports = function useState(target) {
+	if(typeof target !== 'function') throw new TypeError();
+
+	target.prototype.getState = getState;
+	target.prototype.setState = setState;
+	return target;
+}
 
 /***/ }),
 /* 1 */
@@ -390,10 +418,33 @@ function isUndefined(arg) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__action__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__useState__ = __webpack_require__(5);
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__client_Component_js__ = __webpack_require__(4);
+
+
+const app = document.getElementById('app');
+app.appendChild(new __WEBPACK_IMPORTED_MODULE_0__client_Component_js__["a" /* default */]());
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_events__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_events___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_events__);
+
+
+/* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_0_events___default.a());
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__action__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__useState__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__useState___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__useState__);
 
 
@@ -409,8 +460,6 @@ class Component extends HTMLElement {
 	constructor() {
 		super();
 
-		this.handleStoreChange = this.handleStoreChange.bind(this);
-
 		const template = document.createElement('template');
 		template.innerHTML = html;
 		const content = template.content;
@@ -423,21 +472,13 @@ class Component extends HTMLElement {
 		});
 
 		this.appendChild(content);
-	}
 
-	handleStoreChange() {
-		this.setState({ count: __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].getCount() });
-		//this.setState(store)と書いても問題ない;
-	}
-
-	connectedCallback() {
-		__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].on('CHANGE', this.handleStoreChange);
+		__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].on('CHANGE', () => {
+			this.setState({ count: __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].getCount() });
+			//this.setState(store)と書いてもよい;
+		});
 		//初期処理
-		this.handleStoreChange();
-	}
-
-	disconnectedCallback() {
-		__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].removeListener('CHANGE', this.handleStoreChange);
+		this.setState({ count: __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].getCount() });
 	}
 
 	stateChangedCallback(name, oldValue, newValue) {
@@ -458,11 +499,11 @@ customElements.define('x-component', Component);
 /* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_3__useState___default()(Component));
 
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher__ = __webpack_require__(3);
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -472,13 +513,13 @@ customElements.define('x-component', Component);
 });
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_events__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_events___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_events__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dispatcher__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dispatcher__ = __webpack_require__(3);
 
 
 
@@ -502,57 +543,6 @@ class Store extends __WEBPACK_IMPORTED_MODULE_0_events___default.a {
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (new Store(__WEBPACK_IMPORTED_MODULE_1__dispatcher__["a" /* default */]));
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-const map = new WeakMap();
-const privates = (object) => {
-	if(! map.has(object)) {
-		map.set(object, {});
-	}
-	return map.get(object);
-};
-
-function getState() { return privates(this).state; }
-
-function setState(state) {
-	if(typeof state !== 'object' || state === null) return;
-	
-	const that = privates(this);
-	if(typeof that.state !== 'object' || that.state === null) that.state = {};
-	const oldState = that.state;
-	const newState = that.state = Object.assign({}, that.state, state);
-
-	if(Array.isArray(this.constructor.observedState) === false) return;
-	if(typeof this.stateChangedCallback !== 'function') return;
-
-	this.constructor.observedState.forEach((name) => {
-		if(oldState[name] === newState[name]) return;
-		this.stateChangedCallback(name, oldState[name], newState[name]);
-	});
-}
-
-module.exports = function useState(target) {
-	if(typeof target !== 'function') throw new TypeError();
-
-	target.prototype.getState = getState;
-	target.prototype.setState = setState;
-	return target;
-}
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__client_Component_js__ = __webpack_require__(2);
-
-
-const app = document.getElementById('app');
-app.appendChild(new __WEBPACK_IMPORTED_MODULE_0__client_Component_js__["a" /* default */]());
 
 /***/ })
 /******/ ]);

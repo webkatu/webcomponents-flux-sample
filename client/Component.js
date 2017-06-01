@@ -12,8 +12,6 @@ class Component extends HTMLElement {
 	constructor() {
 		super();
 
-		this.handleStoreChange = this.handleStoreChange.bind(this);
-
 		const template = document.createElement('template');
 		template.innerHTML = html;
 		const content = template.content;
@@ -26,21 +24,13 @@ class Component extends HTMLElement {
 		});
 
 		this.appendChild(content);
-	}
 
-	handleStoreChange() {
-		this.setState({ count: store.getCount() });
-		//this.setState(store)と書いても問題ない;
-	}
-
-	connectedCallback() {
-		store.on('CHANGE', this.handleStoreChange);
+		store.on('CHANGE', () => {
+			this.setState({ count: store.getCount() });
+			//this.setState(store)と書いてもよい;
+		});
 		//初期処理
-		this.handleStoreChange();
-	}
-
-	disconnectedCallback() {
-		store.removeListener('CHANGE', this.handleStoreChange);
+		this.setState({ count: store.getCount() });
 	}
 
 	stateChangedCallback(name, oldValue, newValue) {
