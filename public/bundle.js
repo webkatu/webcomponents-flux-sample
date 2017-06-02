@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -386,77 +386,7 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__action__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__useState__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__useState___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__useState__);
-
-
-
-
-
-const html = `
-<span class="count"></span>
-<button type="button">+</button>
-`;
-
-class Component extends HTMLElement {
-	constructor() {
-		super();
-
-		this.handleStoreChange = this.handleStoreChange.bind(this);
-
-		const template = document.createElement('template');
-		template.innerHTML = html;
-		const content = template.content;
-		
-		this.count = content.querySelector('.count');
-		const incrementButton = content.querySelectorAll('button')[0];
-
-		incrementButton.addEventListener('click', (e) => {
-			__WEBPACK_IMPORTED_MODULE_1__action__["a" /* default */].countUp();
-		});
-
-		this.appendChild(content);
-	}
-
-	handleStoreChange() {
-		this.setState({ count: __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].getCount() });
-	}
-
-	connectedCallback() {
-		__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].on('CHANGE', this.handleStoreChange);
-		//初期処理
-		this.handleStoreChange();
-	}
-
-	disconnectedCallback() {
-		__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].removeListener('CHANGE', this.handleStoreChange);
-	}
-
-	stateChangedCallback(name, oldValue, newValue) {
-		switch(name) {
-			case 'count':
-				this.count.textContent = newValue;
-				break;
-		}
-	}
-
-	static get observedState() {
-		return ['count'];
-	}
-}
-
-customElements.define('x-component', Component);
-
-/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_3__useState___default()(Component));
-
-/***/ }),
+/* 2 */,
 /* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -486,17 +416,11 @@ class Store extends __WEBPACK_IMPORTED_MODULE_0_events___default.a {
 		super();
 
 		this.count = 0;
-		this.test = 0;
-		dispatcher.on('countUp', this.onCountUp.bind(this));
-	}
 
-	getCount() {
-		return this.count;
-	}
-
-	onCountUp() {
-		this.count++;
-		this.emit('CHANGE');
+		dispatcher.on('countUp', () => {
+			this.count++;
+			this.emit('CHANGE');
+		});
 	}
 }
 
@@ -504,6 +428,87 @@ class Store extends __WEBPACK_IMPORTED_MODULE_0_events___default.a {
 
 /***/ }),
 /* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__client_Component_js__ = __webpack_require__(6);
+
+
+const app = document.getElementById('app');
+app.appendChild(new __WEBPACK_IMPORTED_MODULE_0__client_Component_js__["a" /* default */]());
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__action__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__useState__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__useState___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__useState__);
+
+
+
+
+
+const template = document.createElement('template');
+template.innerHTML = `
+<span></span>
+<button type="button">+</button>
+`;
+
+class Component extends HTMLElement {
+	constructor() {
+		super();
+
+		this.handleStoreChange = this.handleStoreChange.bind(this);
+
+		const content = template.content;
+		this.span = content.querySelector('span');
+		const incrementButton = content.querySelectorAll('button')[0];
+
+		incrementButton.addEventListener('click', (e) => {
+			__WEBPACK_IMPORTED_MODULE_1__action__["a" /* default */].countUp();
+		});
+
+		this.appendChild(content);
+	}
+
+	handleStoreChange() {
+		this.setState({ count: __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].count });
+	}
+
+	connectedCallback() {
+		__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].on('CHANGE', this.handleStoreChange);
+		//初期処理
+		this.handleStoreChange();
+	}
+
+	disconnectedCallback() {
+		__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].removeListener('CHANGE', this.handleStoreChange);
+	}
+
+	stateChangedCallback(name, oldValue, newValue) {
+		switch(name) {
+			case 'count':
+				this.span.textContent = newValue;
+				break;
+		}
+	}
+
+	static get observedState() {
+		return ['count'];
+	}
+}
+
+customElements.define('x-component', Component);
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_3__useState___default()(Component));
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports) {
 
 const map = new WeakMap();
@@ -540,18 +545,6 @@ module.exports = function useState(target) {
 	target.prototype.setState = setState;
 	return target;
 }
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__client_Component_js__ = __webpack_require__(2);
-
-
-const app = document.getElementById('app');
-app.appendChild(new __WEBPACK_IMPORTED_MODULE_0__client_Component_js__["a" /* default */]());
 
 /***/ })
 /******/ ]);

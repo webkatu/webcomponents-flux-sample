@@ -3,8 +3,9 @@ import action from './action';
 import store from './store';
 import useState from './useState';
 
-const html = `
-<span class="count"></span>
+const template = document.createElement('template');
+template.innerHTML = `
+<span></span>
 <button type="button">+</button>
 `;
 
@@ -14,11 +15,8 @@ class Component extends HTMLElement {
 
 		this.handleStoreChange = this.handleStoreChange.bind(this);
 
-		const template = document.createElement('template');
-		template.innerHTML = html;
 		const content = template.content;
-		
-		this.count = content.querySelector('.count');
+		this.span = content.querySelector('span');
 		const incrementButton = content.querySelectorAll('button')[0];
 
 		incrementButton.addEventListener('click', (e) => {
@@ -29,7 +27,7 @@ class Component extends HTMLElement {
 	}
 
 	handleStoreChange() {
-		this.setState({ count: store.getCount() });
+		this.setState({ count: store.count });
 	}
 
 	connectedCallback() {
@@ -45,7 +43,7 @@ class Component extends HTMLElement {
 	stateChangedCallback(name, oldValue, newValue) {
 		switch(name) {
 			case 'count':
-				this.count.textContent = newValue;
+				this.span.textContent = newValue;
 				break;
 		}
 	}
