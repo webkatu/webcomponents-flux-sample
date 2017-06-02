@@ -6,17 +6,11 @@ class Store extends Emitter {
 		super();
 
 		this.count = 0;
-		this.test = 0;
-		dispatcher.on('countUp', this.onCountUp.bind(this));
-	}
 
-	getCount() {
-		return this.count;
-	}
-
-	onCountUp() {
-		this.count++;
-		this.emit('CHANGE');
+		dispatcher.on('countUp', () => {
+			this.count++;
+			this.emit('CHANGE');
+		});
 	}
 }
 
