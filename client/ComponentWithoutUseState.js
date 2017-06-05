@@ -14,7 +14,7 @@ class Component extends HTMLElement {
 
 		this.handleStoreChange = this.handleStoreChange.bind(this);
 
-		const content = template.content;
+		const content = template.content.cloneNode(true);
 		this.span = content.querySelector('span');
 		const incrementButton = content.querySelectorAll('button')[0];
 

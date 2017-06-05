@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -386,67 +386,14 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 2 */,
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher__ = __webpack_require__(0);
-
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-	countUp() {
-		__WEBPACK_IMPORTED_MODULE_0__dispatcher__["a" /* default */].emit('countUp');
-	},
-});
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_events__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_events___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_events__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dispatcher__ = __webpack_require__(0);
-
-
-
-class Store extends __WEBPACK_IMPORTED_MODULE_0_events___default.a {
-	constructor(dispatcher) {
-		super();
-
-		this.count = 0;
-
-		dispatcher.on('countUp', () => {
-			this.count++;
-			this.emit('CHANGE');
-		});
-	}
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (new Store(__WEBPACK_IMPORTED_MODULE_1__dispatcher__["a" /* default */]));
-
-/***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__client_Component_js__ = __webpack_require__(6);
-
-
-const app = document.getElementById('app');
-app.appendChild(new __WEBPACK_IMPORTED_MODULE_0__client_Component_js__["a" /* default */]());
-
-/***/ }),
-/* 6 */
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__action__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__useState__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__useState__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__useState___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__useState__);
 
 
@@ -465,7 +412,7 @@ class Component extends HTMLElement {
 
 		this.handleStoreChange = this.handleStoreChange.bind(this);
 
-		const content = template.content;
+		const content = template.content.cloneNode(true);
 		this.span = content.querySelector('span');
 		const incrementButton = content.querySelectorAll('button')[0];
 
@@ -508,7 +455,47 @@ customElements.define('x-component', Component);
 /* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_3__useState___default()(Component));
 
 /***/ }),
-/* 7 */
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher__ = __webpack_require__(0);
+
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+	countUp() {
+		__WEBPACK_IMPORTED_MODULE_0__dispatcher__["a" /* default */].emit('countUp');
+	},
+});
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_events__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_events___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_events__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dispatcher__ = __webpack_require__(0);
+
+
+
+class Store extends __WEBPACK_IMPORTED_MODULE_0_events___default.a {
+	constructor(dispatcher) {
+		super();
+
+		this.count = 0;
+
+		dispatcher.on('countUp', () => {
+			this.count++;
+			this.emit('CHANGE');
+		});
+	}
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (new Store(__WEBPACK_IMPORTED_MODULE_1__dispatcher__["a" /* default */]));
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports) {
 
 const map = new WeakMap();
@@ -545,6 +532,18 @@ module.exports = function useState(target) {
 	target.prototype.setState = setState;
 	return target;
 }
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__client_Component_js__ = __webpack_require__(2);
+
+
+const app = document.getElementById('app');
+app.appendChild(new __WEBPACK_IMPORTED_MODULE_0__client_Component_js__["a" /* default */]());
 
 /***/ })
 /******/ ]);
